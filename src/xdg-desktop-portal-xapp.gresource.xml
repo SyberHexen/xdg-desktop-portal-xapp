@@ -3,6 +3,9 @@
   <gresource prefix='/org/freedesktop/portal/desktop/xapp'>
     <file>appchooserdialog.ui</file>
     <file>appchooserrow.ui</file>
+    <file>remotedesktopdialog.ui</file>
+    <file>screencastdialog.ui</file>
+    <file>screencastwidget.ui</file>
   </gresource>
 </gresources>
 

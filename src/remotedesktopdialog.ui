@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="xdg-desktop-portal-xapp">
+  <!-- interface-requires gtk+ 3.22 -->
+  <template class="RemoteDesktopDialog" parent="GtkWindow">
+    <property name="type-hint">dialog</property>
+    <property name="resizable">1</property>
+    <property name="default-width">560</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar" id="titlebar">
+        <property name="visible">1</property>
+        <property name="title" translatable="yes">Remote Control</property>
+        <child>
+          <object class="GtkButton" id="cancel_button">
+            <property name="visible">1</property>
+            <property name="label" translatable="yes">_Cancel</property>
+            <property name="use_underline">1</property>
+            <signal name="clicked" handler="button_clicked"/>
+          </object>
+          <packing>
+            <property name="pack-type">start</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="accept_button">
+            <property name="visible">1</property>
+            <property name="sensitive">0</property>
+            <property name="label" translatable="yes">_Allow</property>
+            <property name="use_underline">1</property>
+            <signal name="clicked" handler="button_clicked"/>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="border-width">18</property>
+        <property name="spacing">18</property>
+
+        <!-- What is asked -->
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkImage" id="app_image">
+                <property name="visible">True</property>
+                <property name="pixel-size">48</property>
+                <property name="icon-name">preferences-desktop-remote-desktop</property>
+                <property name="valign">start</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">6</property>
+                <property name="valign">center</property>
+                <child>
+                  <object class="GtkLabel" id="heading">
+                    <property name="visible">True</property>
+                    <property name="xalign">0.0</property>
+                    <property name="wrap">True</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                      <attribute name="scale" value="1.2"/>
+                    </attributes>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="description">
+                    <property name="visible">True</property>
+                    <property name="xalign">0.0</property>
+                    <property name="wrap">True</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <!-- Devices -->
+        <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="label-xalign">0.0</property>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Allow it to use</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="device_box">
+                <property name="visible">True</property>
+                <property name="orientation">horizontal</property>
+                <property name="spacing">24</property>
+                <property name="border-width">12</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <!-- What it may see -->
+        <child>
+          <object class="ScreenCastWidget" id="screen_cast_widget">
+            <property name="visible">False</property>
+            <property name="vexpand">True</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkCheckButton" id="persist_check">
+            <property name="visible">False</property>
+            <property name="label" translatable="yes">_Remember this choice</property>
+            <property name="use_underline">1</property>
+            <property name="tooltip-text" translatable="yes">Let this application control the computer again without asking</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
