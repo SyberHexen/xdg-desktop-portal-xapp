@@ -220,11 +220,40 @@ main (int argc, char *argv[])
       return 0;
   }
 
-  if (gtk_init_check (&argc, &argv))
+  /* The portal can be started (by D-Bus activation along with the graphical
+   * session) before the compositor has created its display: keep trying for
+   * a while instead of running without dialogs for the whole session.  In a
+   * Wayland session wait for Wayland: the compositor's X11 socket can answer
+   * first, and dialogs on X11 there get no focus and let clicks through to
+   * the windows behind them.  X11 is the fallback if Wayland never comes. */
+  if (g_getenv ("WAYLAND_DISPLAY") || g_getenv ("DISPLAY"))
   {
-      have_gdk_backend = TRUE;
+      gint64 deadline = g_get_monotonic_time () + 10 * G_USEC_PER_SEC;
+
+      if (g_getenv ("WAYLAND_DISPLAY") && !g_getenv ("GDK_BACKEND"))
+        gdk_set_allowed_backends ("wayland");
+
+      while (!(have_gdk_backend = gtk_init_check (&argc, &argv)) &&
+             g_get_monotonic_time () < deadline)
+        g_usleep (250 * 1000);
+
+      gdk_set_allowed_backends (NULL);
+      if (!have_gdk_backend)
+        have_gdk_backend = gtk_init_check (&argc, &argv);
+
+      /* Still no display: the portal was started before the session (at
+       * logout, or while the greeter is shown).  Running without dialogs
+       * for the whole session would break screen sharing and the other
+       * dialogs, so exit; the next request starts it again (D-Bus
+       * activation), when the display is there. */
+      if (!have_gdk_backend)
+        {
+          g_printerr ("No display yet; exiting to be started again when needed\n");
+          return 1;
+        }
   }
-  else
+
+  if (!have_gdk_backend)
   {
       g_critical ("Failed to initialize Gtk");
   }
