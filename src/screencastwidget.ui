@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="xdg-desktop-portal-xapp">
+  <!-- interface-requires gtk+ 3.22 -->
+  <template class="ScreenCastWidget" parent="GtkBox">
+    <property name="orientation">vertical</property>
+    <property name="spacing">12</property>
+
+    <child>
+      <object class="GtkStackSwitcher" id="source_type_switcher">
+        <property name="visible">False</property>
+        <property name="stack">source_type</property>
+        <property name="halign">center</property>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkStack" id="source_type">
+        <property name="visible">True</property>
+        <property name="transition-type">crossfade</property>
+        <property name="vexpand">True</property>
+
+        <!-- Windows -->
+        <child>
+          <object class="GtkBox" id="window_selection">
+            <property name="visible">False</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="window_heading">
+                <property name="visible">True</property>
+                <property name="xalign">0.0</property>
+                <property name="wrap">True</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="window_list_scrolled">
+                <property name="visible">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <property name="min-content-height">330</property>
+                <property name="vexpand">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkFlowBox" id="window_list">
+                    <property name="visible">True</property>
+                    <property name="valign">start</property>
+                    <property name="homogeneous">True</property>
+                    <property name="min-children-per-line">2</property>
+                    <property name="max-children-per-line">4</property>
+                    <property name="column-spacing">6</property>
+                    <property name="row-spacing">6</property>
+                    <property name="margin">6</property>
+                    <property name="activate-on-single-click">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">windows_page</property>
+            <property name="title" translatable="yes">Single Window</property>
+          </packing>
+        </child>
+
+        <!-- Monitors -->
+        <child>
+          <object class="GtkBox" id="monitor_selection">
+            <property name="visible">False</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="monitor_heading">
+                <property name="visible">True</property>
+                <property name="xalign">0.0</property>
+                <property name="wrap">True</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="monitor_list_scrolled">
+                <property name="visible">True</property>
+                <property name="hscrollbar-policy">never</property>
+                <property name="min-content-height">330</property>
+                <property name="vexpand">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkFlowBox" id="monitor_list">
+                    <property name="visible">True</property>
+                    <property name="valign">start</property>
+                    <property name="homogeneous">True</property>
+                    <property name="min-children-per-line">2</property>
+                    <property name="max-children-per-line">4</property>
+                    <property name="column-spacing">6</property>
+                    <property name="row-spacing">6</property>
+                    <property name="margin">6</property>
+                    <property name="activate-on-single-click">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="name">monitors_page</property>
+            <property name="title" translatable="yes">Entire Screen</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

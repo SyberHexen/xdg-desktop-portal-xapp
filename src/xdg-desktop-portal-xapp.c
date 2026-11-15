@@ -48,7 +48,9 @@
 #include "background.h"
 #include "inhibit.h"
 #include "lockdown.h"
+#include "remotedesktop.h"
 #include "request.h"
+#include "screencast.h"
 #include "screenshot.h"
 #include "settings.h"
 #include "wallpaper.h"
@@ -127,6 +129,20 @@ on_bus_acquired (GDBusConnection *connection,
     }
 
   if ((CINNAMON_MODE || XFCE_MODE) && !screenshot_init (connection, &error))
+    {
+      g_warning ("error: %s\n", error->message);
+      g_clear_error (&error);
+    }
+
+  /* Backed by Muffin's org.cinnamon.Muffin.ScreenCast and RemoteDesktop;
+   * they are only provided while Muffin offers those */
+  if (CINNAMON_MODE && !screen_cast_init (connection, &error))
+    {
+      g_warning ("error: %s\n", error->message);
+      g_clear_error (&error);
+    }
+
+  if (CINNAMON_MODE && !remote_desktop_init (connection, &error))
     {
       g_warning ("error: %s\n", error->message);
       g_clear_error (&error);

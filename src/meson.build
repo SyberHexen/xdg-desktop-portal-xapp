@@ -15,7 +15,9 @@ desktop_portal_dbus_interfaces = [
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Background.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Inhibit.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Lockdown.xml',
+  desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.RemoteDesktop.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Request.xml',
+  desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.ScreenCast.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Session.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Settings.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Wallpaper.xml',
@@ -47,7 +49,10 @@ desktop_dbus_interfaces = files(
   top_srcdir / 'data' / 'org.cinnamon.PortalHandlers.xml',
   top_srcdir / 'data' / 'org.cinnamon.ScreenSaver.xml',
   top_srcdir / 'data' / 'org.gnome.ScreenSaver.xml',
-  top_srcdir / 'data' / 'org.mate.ScreenSaver.xml'
+  top_srcdir / 'data' / 'org.mate.ScreenSaver.xml',
+  top_srcdir / 'data' / 'org.cinnamon.Muffin.DisplayConfig.xml',
+  top_srcdir / 'data' / 'org.cinnamon.Muffin.RemoteDesktop.xml',
+  top_srcdir / 'data' / 'org.cinnamon.Muffin.ScreenCast.xml',
 )
 
 built_sources += gnome.gdbus_codegen(
@@ -77,6 +82,7 @@ deps = [
   dependency('glib-2.0', version: '>= 2.44'),
   dependency('gio-unix-2.0'),
   dependency('gtk+-3.0'),
+  dependency('xapp'),
   xdg_desktop_portal_dep,
 ]
 
@@ -85,13 +91,22 @@ sources = built_sources + files(
   'appchooserdialog.c',
   'appchooserrow.c',
   'background.c',
+  'displaystatetracker.c',
   'externalwindow.c',
   'inhibit.c',
   'lockdown.c',
+  'muffinscreencast.c',
+  'remotedesktop.c',
+  'remotedesktopdialog.c',
   'request.c',
+  'screencast.c',
+  'screencastdialog.c',
+  'screencastwidget.c',
   'screenshot.c',
   'session.c',
   'settings.c',
+  'shellintrospect.c',
+  'sharingindicator.c',
   'utils.c',
   'wallpaper.c',
   'wallpaperdialog.c',
