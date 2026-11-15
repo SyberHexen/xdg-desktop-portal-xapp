@@ -7,5 +7,39 @@
         <arg type="a{sv}" direction="out" name="apps" /> \
     </method> \
     <signal name="RunningAppsChanged"/> \
+    <!--
+        GetWindows:
+        The windows that can be shared, by their Muffin window ID (as
+        RecordWindow of org.cinnamon.Muffin.ScreenCast takes it), with:
+        "title" (s), "app-id" (s), "wm-class" (s), "has-focus" (b)
+    -->
+    <method name="GetWindows">
+      <arg type="a{ta{sv}}" direction="out" name="windows" />
+    </method>
+    <!-- A window opened, closed or changed its title -->
+    <signal name="WindowsChanged"/>
+    <!--
+        GetWindowThumbnail, GetMonitorThumbnail:
+        A preview of a window or monitor scaled down to fit max_width x
+        max_height, in Cairo ARGB32 pixels; 0 x 0 if it is gone.
+    -->
+    <method name="GetWindowThumbnail">
+      <arg type="t" direction="in" name="window_id" />
+      <arg type="i" direction="in" name="max_width" />
+      <arg type="i" direction="in" name="max_height" />
+      <arg type="i" direction="out" name="width" />
+      <arg type="i" direction="out" name="height" />
+      <arg type="i" direction="out" name="stride" />
+      <arg type="ay" direction="out" name="pixels" />
+    </method>
+    <method name="GetMonitorThumbnail">
+      <arg type="s" direction="in" name="connector" />
+      <arg type="i" direction="in" name="max_width" />
+      <arg type="i" direction="in" name="max_height" />
+      <arg type="i" direction="out" name="width" />
+      <arg type="i" direction="out" name="height" />
+      <arg type="i" direction="out" name="stride" />
+      <arg type="ay" direction="out" name="pixels" />
+    </method>
   </interface>
 </node>
