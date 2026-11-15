@@ -72,9 +72,16 @@ session_unexport (Session *session)
   g_object_unref (session);
 }
 
-void
-session_close (Session *session)
+static void
+close_session (Session  *session,
+               gboolean  notify)
 {
+  /* Closed by the implementation (the compositor ended it, or the user
+   * stopped it from the sharing indicator): tell the frontend, which tells
+   * the application */
+  if (notify && session->exported)
+    xdp_impl_session_emit_closed (XDP_IMPL_SESSION (session));
+
   if (session->exported)
     session_unexport (session);
 
@@ -85,14 +92,21 @@ session_close (Session *session)
   g_object_unref (session);
 }
 
+void
+session_close (Session *session)
+{
+  close_session (session, TRUE);
+}
+
 static gboolean
 handle_close (XdpImplSession *object,
               GDBusMethodInvocation *invocation)
 {
   Session *session = (Session *)object;
 
+  /* Asked by the frontend: nothing to tell it */
   if (!session->closed)
-    session_close (session);
+    close_session (session, FALSE);
 
   xdp_impl_session_complete_close (object, invocation);
 
