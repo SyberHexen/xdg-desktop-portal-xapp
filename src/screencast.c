@@ -42,7 +42,7 @@ typedef struct _ScreenCastDialogHandle ScreenCastDialogHandle;
 /* restore_data: (RESTORE_VENDOR, RESTORE_VERSION, a(ua{sv})), a source type
  * with what finds the source again:
  *   monitor: "match" (s) vendor:product:serial, "connector" (s)
- *   window: "app-id" (s), "title" (s), "window-id" (t) */
+ *   window: "app-id" (s), "title" (s), "wm-class" (s), "window-id" (t) */
 #define RESTORE_VENDOR "xapp"
 #define RESTORE_VERSION 1
 
@@ -494,7 +494,7 @@ screen_cast_describe_sources (GVariant *source_selections)
 
           if (shell_introspect_lookup_window (shell_introspect,
                                               g_variant_get_uint64 (value),
-                                              &app_id, &title))
+                                              &app_id, &title, NULL))
             name = g_strdup_printf ("“%s”", title);
           else
             name = g_strdup ("a window");
@@ -547,16 +547,19 @@ screen_cast_build_restore_sources (GVariant *source_selections)
           uint64_t id = g_variant_get_uint64 (value);
           g_autofree char *app_id = NULL;
           g_autofree char *title = NULL;
+          g_autofree char *wm_class = NULL;
 
           g_variant_builder_add (&props, "{sv}", "window-id",
                                  g_variant_new_uint64 (id));
           if (shell_introspect_lookup_window (shell_introspect, id,
-                                              &app_id, &title))
+                                              &app_id, &title, &wm_class))
             {
               g_variant_builder_add (&props, "{sv}", "app-id",
                                      g_variant_new_string (app_id));
               g_variant_builder_add (&props, "{sv}", "title",
                                      g_variant_new_string (title));
+              g_variant_builder_add (&props, "{sv}", "wm-class",
+                                     g_variant_new_string (wm_class));
             }
         }
       g_variant_builder_add (&sources_builder, "(u@a{sv})", source_type,
@@ -609,14 +612,15 @@ screen_cast_restore_sources (GVariant            *data,
       else if (source_type == SCREEN_CAST_SOURCE_TYPE_WINDOW &&
                (select->source_types & SCREEN_CAST_SOURCE_TYPE_WINDOW))
         {
-          const char *app_id = NULL, *title = NULL;
+          const char *app_id = NULL, *title = NULL, *wm_class = NULL;
           uint64_t id = 0, found;
 
           g_variant_lookup (props, "app-id", "&s", &app_id);
           g_variant_lookup (props, "title", "&s", &title);
+          g_variant_lookup (props, "wm-class", "&s", &wm_class);
           g_variant_lookup (props, "window-id", "t", &id);
           if (!shell_introspect_find_window (shell_introspect, id, app_id,
-                                             title, &found))
+                                             title, wm_class, &found))
             goto fail;
           g_variant_builder_add (&sources_builder, "(ut)", source_type,
                                  found);

@@ -162,7 +162,8 @@ gboolean
 shell_introspect_lookup_window (ShellIntrospect  *shell_introspect,
                                 uint64_t          id,
                                 char            **app_id,
-                                char            **title)
+                                char            **title,
+                                char            **wm_class)
 {
   g_autoptr(GVariant) windows = get_windows_sync (shell_introspect);
   GVariantIter iter;
@@ -181,6 +182,8 @@ shell_introspect_lookup_window (ShellIntrospect  *shell_introspect,
             *app_id = g_strdup ("");
           if (!g_variant_lookup (props, "title", "s", title))
             *title = g_strdup ("");
+          if (wm_class && !g_variant_lookup (props, "wm-class", "s", wm_class))
+            *wm_class = g_strdup ("");
           g_variant_unref (props);
           return TRUE;
         }
@@ -197,6 +200,7 @@ shell_introspect_find_window (ShellIntrospect *shell_introspect,
                               uint64_t         id,
                               const char      *app_id,
                               const char      *title,
+                              const char      *wm_class,
                               uint64_t        *out_id)
 {
   g_autoptr(GVariant) windows = get_windows_sync (shell_introspect);
@@ -207,18 +211,30 @@ shell_introspect_find_window (ShellIntrospect *shell_introspect,
   int n_app_windows = 0;
   gboolean found_id = FALSE;
 
-  if (!windows || !app_id || !*app_id)
+  /* A window of no known application (a Wine or Proton game) gets an app
+   * ID made up of a running number ("window:30"), different each time the
+   * application starts: its WM class (wow.exe) finds it again instead */
+  gboolean by_wm_class = (!app_id || !*app_id ||
+                          g_str_has_prefix (app_id, "window:")) &&
+                         wm_class && *wm_class;
+
+  if (!windows || (!by_wm_class && (!app_id || !*app_id)))
     return FALSE;
 
   g_variant_iter_init (&iter, windows);
   while (g_variant_iter_next (&iter, "{t@a{sv}}", &window_id, &props))
     {
-      const char *window_app_id = "", *window_title = "";
+      const char *window_app_id = "", *window_title = "", *window_wm_class = "";
+      gboolean same_app;
 
       g_variant_lookup (props, "app-id", "&s", &window_app_id);
       g_variant_lookup (props, "title", "&s", &window_title);
+      g_variant_lookup (props, "wm-class", "&s", &window_wm_class);
 
-      if (g_strcmp0 (window_app_id, app_id) == 0)
+      same_app = by_wm_class ? g_strcmp0 (window_wm_class, wm_class) == 0
+                             : g_strcmp0 (window_app_id, app_id) == 0;
+
+      if (same_app)
         {
           n_app_windows++;
           only = window_id;
