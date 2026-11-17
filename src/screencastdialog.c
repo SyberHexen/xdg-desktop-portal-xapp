@@ -87,6 +87,15 @@ button_clicked (GtkWidget *button,
   g_signal_emit (dialog, signals[DONE], 0, response, selections);
 }
 
+/* A double-clicked source is shared at once, as with the Share button */
+static void
+on_source_activated (ScreenCastWidget *screen_cast_widget,
+                     ScreenCastDialog *dialog)
+{
+  if (gtk_widget_get_sensitive (dialog->accept_button))
+    button_clicked (dialog->accept_button, dialog);
+}
+
 static void
 on_has_selection_changed (ScreenCastWidget *screen_cast_widget,
                           gboolean has_selection,
@@ -128,6 +137,8 @@ screen_cast_dialog_init (ScreenCastDialog *dialog)
 
   g_signal_connect (dialog->screen_cast_widget, "has-selection-changed",
                     G_CALLBACK (on_has_selection_changed), dialog);
+  g_signal_connect (dialog->screen_cast_widget, "source-activated",
+                    G_CALLBACK (on_source_activated), dialog);
   gtk_widget_show (dialog->screen_cast_widget);
 }
 

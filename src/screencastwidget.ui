@@ -52,7 +52,7 @@
                     <property name="column-spacing">6</property>
                     <property name="row-spacing">6</property>
                     <property name="margin">6</property>
-                    <property name="activate-on-single-click">True</property>
+                    <property name="activate-on-single-click">False</property>
                   </object>
                 </child>
               </object>
@@ -97,7 +97,7 @@
                     <property name="column-spacing">6</property>
                     <property name="row-spacing">6</property>
                     <property name="margin">6</property>
-                    <property name="activate-on-single-click">True</property>
+                    <property name="activate-on-single-click">False</property>
                   </object>
                 </child>
               </object>
