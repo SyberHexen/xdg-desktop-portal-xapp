@@ -65,10 +65,12 @@ void shell_introspect_get_thumbnail (ShellIntrospect   *shell_introspect,
 gboolean shell_introspect_lookup_window (ShellIntrospect  *shell_introspect,
                                          uint64_t          id,
                                          char            **app_id,
-                                         char            **title);
+                                         char            **title,
+                                         char            **wm_class);
 
 gboolean shell_introspect_find_window (ShellIntrospect *shell_introspect,
                                        uint64_t         id,
                                        const char      *app_id,
                                        const char      *title,
+                                       const char      *wm_class,
                                        uint64_t        *out_id);
