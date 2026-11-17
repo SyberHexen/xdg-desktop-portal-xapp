@@ -41,6 +41,7 @@
 enum
 {
   HAS_SELECTION_CHANGED,
+  SOURCE_ACTIVATED,
 
   N_SIGNALS
 };
@@ -550,6 +551,16 @@ emit_selection_change_in_idle_cb (gpointer data)
 }
 
 static void
+on_child_activated (GtkFlowBox       *flow_box,
+                    GtkFlowBoxChild  *child,
+                    ScreenCastWidget *widget)
+{
+  /* Activating also selects it, which the selection handler has seen */
+  gtk_flow_box_select_child (flow_box, child);
+  g_signal_emit (widget, signals[SOURCE_ACTIVATED], 0);
+}
+
+static void
 on_selected_children_changed (GtkFlowBox       *flow_box,
                               ScreenCastWidget *widget)
 {
@@ -683,6 +694,11 @@ screen_cast_widget_set_source_types (ScreenCastWidget     *screen_cast_widget,
 
   if (__builtin_popcount (source_types) > 1)
     gtk_widget_show (screen_cast_widget->source_type_switcher);
+
+  /* Windows first: a single window is what's shared most of the time */
+  if (source_types & SCREEN_CAST_SOURCE_TYPE_WINDOW)
+    gtk_stack_set_visible_child (GTK_STACK (screen_cast_widget->source_type),
+                                 screen_cast_widget->window_selection);
 }
 
 /* Smaller lists, for dialogs that show more than the picker */
@@ -746,6 +762,12 @@ screen_cast_widget_init (ScreenCastWidget *widget)
   g_signal_connect (widget->window_list, "selected-children-changed",
                     G_CALLBACK (on_selected_children_changed),
                     widget);
+  g_signal_connect (widget->monitor_list, "child-activated",
+                    G_CALLBACK (on_child_activated),
+                    widget);
+  g_signal_connect (widget->window_list, "child-activated",
+                    G_CALLBACK (on_child_activated),
+                    widget);
 
   widget->display_state_tracker = display_state_tracker_get ();
   widget->monitors_changed_handler_id =
@@ -777,6 +799,14 @@ screen_cast_widget_class_init (ScreenCastWidgetClass *klass)
                                                  NULL,
                                                  G_TYPE_NONE, 1,
                                                  G_TYPE_BOOLEAN);
+  /* A source was double-clicked (or chosen with Enter): share it */
+  signals[SOURCE_ACTIVATED] = g_signal_new ("source-activated",
+                                            G_TYPE_FROM_CLASS (klass),
+                                            G_SIGNAL_RUN_LAST,
+                                            0,
+                                            NULL, NULL,
+                                            NULL,
+                                            G_TYPE_NONE, 0);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/freedesktop/portal/desktop/xapp/screencastwidget.ui");
   gtk_widget_class_bind_template_child (widget_class, ScreenCastWidget, source_type_switcher);
