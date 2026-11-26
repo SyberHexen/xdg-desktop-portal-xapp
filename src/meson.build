@@ -13,6 +13,7 @@ desktop_portal_interfaces_dir = xdg_desktop_portal_dep.get_variable(
 desktop_portal_dbus_interfaces = [
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.AppChooser.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Background.xml',
+  desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.GlobalShortcuts.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Inhibit.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.Lockdown.xml',
   desktop_portal_interfaces_dir / 'org.freedesktop.impl.portal.RemoteDesktop.xml',
@@ -93,6 +94,7 @@ sources = built_sources + files(
   'background.c',
   'displaystatetracker.c',
   'externalwindow.c',
+  'globalshortcuts.c',
   'inhibit.c',
   'lockdown.c',
   'muffinscreencast.c',
