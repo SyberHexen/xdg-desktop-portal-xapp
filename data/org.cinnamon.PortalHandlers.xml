@@ -41,5 +41,18 @@
       <arg type="i" direction="out" name="stride" />
       <arg type="ay" direction="out" name="pixels" />
     </method>
+    <method name="GrabShortcuts">
+      <arg type="s" direction="in" name="owner" />
+      <arg type="a(ss)" direction="in" name="shortcuts" />
+      <arg type="as" direction="out" name="failed" />
+    </method>
+    <method name="UngrabShortcuts">
+      <arg type="s" direction="in" name="owner" />
+    </method>
+    <signal name="ShortcutActivated">
+      <arg type="s" name="owner" />
+      <arg type="s" name="shortcut_id" />
+      <arg type="u" name="timestamp" />
+    </signal>
   </interface>
 </node>

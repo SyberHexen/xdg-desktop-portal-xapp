@@ -46,6 +46,7 @@
 #include "utils.h"
 #include "appchooser.h"
 #include "background.h"
+#include "globalshortcuts.h"
 #include "inhibit.h"
 #include "lockdown.h"
 #include "remotedesktop.h"
@@ -143,6 +144,12 @@ on_bus_acquired (GDBusConnection *connection,
     }
 
   if (CINNAMON_MODE && !remote_desktop_init (connection, &error))
+    {
+      g_warning ("error: %s\n", error->message);
+      g_clear_error (&error);
+    }
+
+  if (CINNAMON_MODE && !global_shortcuts_init (connection, &error))
     {
       g_warning ("error: %s\n", error->message);
       g_clear_error (&error);
